@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	_ "github.com/gorilla/mux"
 )
 
 func handleGet(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +16,7 @@ func handleHttp() {
 	router := mux.NewRouter()
 	router.HandleFunc("/get", handleGet).Methods(http.MethodGet)
 
-	log.Fatal(http.ListenAndServe(":8083", router))
+	log.Fatal(http.ListenAndServe(":80", router))
 }
 
 func main() {
