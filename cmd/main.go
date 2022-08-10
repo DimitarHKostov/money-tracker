@@ -1,24 +1,40 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
-	"net/http"
+	"money-tracker/pkg/app"
+	"money-tracker/pkg/cors"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
-func handleGet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("success"))
-	w.WriteHeader(http.StatusOK)
-}
-
-func handleHttp() {
-	router := mux.NewRouter()
-	router.HandleFunc("/get", handleGet).Methods(http.MethodGet)
-
-	log.Fatal(http.ListenAndServe(":80", router))
-}
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "test"
+)
 
 func main() {
-	handleHttp()
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s sslmode=disable",
+		host, port, user, password)
+
+	dbConnection, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer dbConnection.Close()
+
+	app := app.App{Router: mux.NewRouter(), DbConnection: dbConnection}
+	app.Router.Use(cors.Middleware)
+
+	app.Configure()
+	err = app.Run()
+	if err != nil {
+		log.Panic(err)
+	}
 }
