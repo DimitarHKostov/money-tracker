@@ -18,14 +18,14 @@ const (
 	password = "test"
 )
 
-func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s sslmode=disable",
-		host, port, user, password)
+var (
+	databaseConnectionString = fmt.Sprintf("host=%s port=%d user=%s password=%s sslmode=disable", host, port, user, password)
+)
 
-	dbConnection, err := sql.Open("postgres", psqlInfo)
+func main() {
+	dbConnection, err := sql.Open("postgres", databaseConnectionString)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	defer dbConnection.Close()
 
