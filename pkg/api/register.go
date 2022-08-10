@@ -6,7 +6,13 @@ import (
 	"net/http"
 )
 
-func Login(dbConnection *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+const (
+	registerQuery = `
+	INSERT INTO Account(Email, Username, Password)
+	VALUES ($1, $2, $3)`
+)
+
+func Register(dbConnection *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, err := dbConnection.Exec(registerQuery, "asd", "asd", "asd")
 		if err != nil {
