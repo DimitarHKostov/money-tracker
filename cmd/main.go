@@ -6,6 +6,8 @@ import (
 	"log"
 	"money-tracker/pkg/app"
 	"money-tracker/pkg/cors"
+	"money-tracker/pkg/query"
+	"money-tracker/pkg/validator"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -29,7 +31,7 @@ func main() {
 	}
 	defer dbConnection.Close()
 
-	app := app.App{Router: mux.NewRouter(), DbConnection: dbConnection}
+	app := app.App{Router: mux.NewRouter(), DbConnection: dbConnection, Validator: &validator.Validator{}, Query: &query.Query{}}
 	app.Router.Use(cors.Middleware)
 
 	app.Configure()
