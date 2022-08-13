@@ -21,7 +21,7 @@ func Register(validatorInstance validator.ValidatorInterface, dbConnection *sql.
 
 		validationResult := validatorInstance.Validate(operation.Register, r, dbConnection, queryInstance)
 		if validationResult.ValidationResultStatus == validator.Failure {
-			log.Println("validation failed", validationResult.ValidationResultMessage)
+			log.Println(validationResult.ValidationResultMessage)
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
