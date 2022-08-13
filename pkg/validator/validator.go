@@ -1,40 +1,28 @@
 package validator
 
-import "errors"
+import (
+	"database/sql"
+	"money-tracker/pkg/operation"
+	"money-tracker/pkg/query"
+	"net/http"
+)
 
 type Validator struct{}
 
-func (v *Validator) ValidateUsername(username string) error {
-	if len(username) < 6 {
-		return errors.New("Not enough symbols")
+func (v *Validator) Validate(op operation.Operation, request *http.Request, dbConnection *sql.DB, queryInstance query.QueryInterface) *ValidationResult {
+	switch op {
+	case operation.Register:
+		return v.validateRegister(request, dbConnection, queryInstance)
+	default:
+		return nil
 	}
+}
 
-	hasUppercaseLetter := false
-	hasLowercaseLetter := false
-	hasSpecialSymbol := false
-	hasNumber := false
-
-	for _, letter := range username {
-		if letter >= 'a' && letter <= 'z' {
-			hasLowercaseLetter = true
-		}
-
-		if letter >= 'A' && letter <= 'Z' {
-			hasUppercaseLetter = true
-		}
-
-		if letter >= '0' && letter <= '9' {
-			hasNumber = true
-		}
-
-		if letter >= '!' && letter <= '/' {
-			hasSpecialSymbol = true
-		}
+func (v *Validator) validateRegister(request *http.Request, dbConnection *sql.DB, queryInstance query.QueryInterface) *ValidationResult {
+	return &ValidationResult{
+		ValidationResultStatus: Success,
+		ValidationResultMessage: &ValidationResultMessage{
+			Message: Success.String(),
+		},
 	}
-
-	if !hasUppercaseLetter || !hasLowercaseLetter || !hasSpecialSymbol || !hasNumber {
-		return errors.New("validation failed")
-	}
-
-	return nil
 }
