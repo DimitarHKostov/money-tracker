@@ -1,7 +1,8 @@
 package query
 
 type QueryInterface interface {
-	GetRegisterAccountQuery() string
-	GetSelectAccountsQuery() string
-	GetSelectAccountWithUsernameQuery() string
+	RegisterAccount() string
+	SelectAccounts() string
+	SelectAccountWithUsername() string
+	SelectAccountWithEmail() string
 }

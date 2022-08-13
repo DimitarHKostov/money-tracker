@@ -1,21 +1,26 @@
 package query
 
 const (
-	registerAccountQuery         = `INSERT INTO Account(Email, Username, Password) VALUES ($1, $2, $3)`
-	selectAccountsQuery          = `SELECT * FROM ACCOUNT`
-	selectAccountByUsernameQuery = `SELECT Email, Username, Password FROM ACCOUNT WHERE Username = $1`
+	registerAccount         = `INSERT INTO Account(Email, Username, Password) VALUES ($1, $2, $3)`
+	selectAccounts          = `SELECT * FROM ACCOUNT`
+	selectAccountByUsername = `SELECT Email, Username, Password FROM ACCOUNT WHERE Username = $1`
+	selectAccountByEmail    = `SELECT Email, Username, Password FROM ACCOUNT WHERE Email = $1`
 )
 
 type Query struct{}
 
-func (q *Query) GetRegisterAccountQuery() string {
-	return registerAccountQuery
+func (q *Query) RegisterAccount() string {
+	return registerAccount
 }
 
-func (q *Query) GetSelectAccountsQuery() string {
-	return selectAccountsQuery
+func (q *Query) SelectAccounts() string {
+	return selectAccounts
 }
 
-func (q *Query) GetSelectAccountWithUsernameQuery() string {
-	return selectAccountByUsernameQuery
+func (q *Query) SelectAccountWithUsername() string {
+	return selectAccountByUsername
+}
+
+func (q *Query) SelectAccountWithEmail() string {
+	return selectAccountByEmail
 }

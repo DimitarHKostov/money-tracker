@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"money-tracker/pkg/api"
+	"money-tracker/pkg/operation"
 	"money-tracker/pkg/query"
 	"money-tracker/pkg/validator"
 
@@ -12,8 +13,8 @@ import (
 )
 
 const (
-	basePath = "/api"
-	appPort  = ":80"
+	apiVersion = "/api/v1"
+	appPort    = ":80"
 )
 
 type App struct {
@@ -28,13 +29,14 @@ func (a *App) Run() error {
 }
 
 func (a *App) Configure() {
-	a.Router.PathPrefix(basePath+"/register").HandlerFunc(a.configureOperation(api.Register)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(basePath+"/login").HandlerFunc(a.configureOperation(api.Login)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(basePath+"/logout").HandlerFunc(a.configureOperation(api.Logout)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(basePath+"/refresh").HandlerFunc(a.configureOperation(api.Refresh)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(basePath+"/calculate").HandlerFunc(a.configureOperation(api.Calculate)).Methods(http.MethodPost, http.MethodOptions)
+	a.Router.PathPrefix(apiVersion+"/register").HandlerFunc(a.configureOperation(operation.Register)).Methods(http.MethodPost, http.MethodOptions)
 }
 
-func (a *App) configureOperation(operation func(*sql.DB, validator.ValidatorInterface, query.QueryInterface) func(w http.ResponseWriter, r *http.Request)) func(http.ResponseWriter, *http.Request) {
-	return operation(a.DbConnection, a.Validator, a.Query)
+func (a *App) configureOperation(op operation.Operation) func(http.ResponseWriter, *http.Request) {
+	switch op {
+	case operation.Register:
+		return api.Register(a.Validator, a.DbConnection, a.Query)
+	}
+
+	return nil
 }
