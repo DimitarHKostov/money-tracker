@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"money-tracker/pkg/database_manager"
+	"money-tracker/pkg/database/database_manager"
 	"money-tracker/pkg/validation/validation_result"
 	"net/http"
 )

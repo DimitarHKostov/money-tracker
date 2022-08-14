@@ -7,20 +7,20 @@ const (
 	selectAccountByEmail    = `SELECT Email, Username, Password FROM ACCOUNT WHERE Email = $1`
 )
 
-type Query struct{}
+type PostgresQuery struct{}
 
-func (q *Query) RegisterAccount() string {
+func (q *PostgresQuery) RegisterAccount() string {
 	return registerAccount
 }
 
-func (q *Query) SelectAccounts() string {
+func (q *PostgresQuery) SelectAccounts() string {
 	return selectAccounts
 }
 
-func (q *Query) SelectAccountWithUsername() string {
+func (q *PostgresQuery) SelectAccountWithUsername() string {
 	return selectAccountByUsername
 }
 
-func (q *Query) SelectAccountWithEmail() string {
+func (q *PostgresQuery) SelectAccountWithEmail() string {
 	return selectAccountByEmail
 }
