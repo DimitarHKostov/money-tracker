@@ -10,7 +10,7 @@ import (
 	"money-tracker/pkg/generator"
 	"money-tracker/pkg/jwt"
 	"money-tracker/pkg/query"
-	"money-tracker/pkg/validator"
+	"money-tracker/pkg/validation/validator_factory"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -40,7 +40,7 @@ func main() {
 			DbConnection: dbConnection,
 			Query:        &query.Query{},
 		},
-		Validator: &validator.Validator{},
+		ValidatorFactory: validator_factory.ValidatorFactory{},
 		JWTManager: &jwt.JWTManager{
 			PayloadGenerator: &generator.PayloadGenerator{},
 			SecretKey:        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

@@ -1,4 +1,4 @@
-package validator
+package validation_result_status
 
 type ValidationResultStatus int
 
