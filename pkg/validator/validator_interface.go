@@ -1,12 +1,11 @@
 package validator
 
 import (
-	"database/sql"
+	"money-tracker/pkg/database_manager"
 	"money-tracker/pkg/operation"
-	"money-tracker/pkg/query"
 	"net/http"
 )
 
 type ValidatorInterface interface {
-	Validate(operation.Operation, *http.Request, *sql.DB, query.QueryInterface) *ValidationResult
+	Validate(operation.Operation, *http.Request, database_manager.DatabaseManagerInterface) *ValidationResult
 }
