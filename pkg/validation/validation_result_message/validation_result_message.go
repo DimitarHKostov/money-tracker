@@ -1,4 +1,4 @@
-package validator
+package validation_result_message
 
 type ValidationResultMessage struct {
 	Message string
