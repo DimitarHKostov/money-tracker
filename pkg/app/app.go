@@ -1,11 +1,11 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 
 	"money-tracker/pkg/api"
-	"money-tracker/pkg/query"
+	"money-tracker/pkg/database_manager"
+	"money-tracker/pkg/jwt"
 	"money-tracker/pkg/validator"
 
 	"github.com/gorilla/mux"
@@ -17,20 +17,18 @@ const (
 )
 
 type App struct {
-	Router       *mux.Router
-	DbConnection *sql.DB
-	Validator    validator.ValidatorInterface
-	Query        query.QueryInterface
+	Router          *mux.Router
+	Validator       validator.ValidatorInterface
+	JWTManager      jwt.JWTManagerInterface
+	DatabaseManager database_manager.DatabaseManagerInterface
 }
 
 func (a *App) Run() error {
-	return http.ListenAndServe(appPort, a.Router)
-}
+	a.Router.PathPrefix(apiVersion+"/register").HandlerFunc(api.Register(a.Validator, a.DatabaseManager)).Methods(http.MethodPost, http.MethodOptions)
+	//a.Router.PathPrefix(apiVersion+"/login").HandlerFunc(api.Login(a.Validator, a.DbConnection, a.Query, a.JWTManager)).Methods(http.MethodPost, http.MethodOptions)
+	//a.Router.PathPrefix(apiVersion+"/logout").HandlerFunc(api.Logout(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
+	//a.Router.PathPrefix(apiVersion+"/refresh").HandlerFunc(api.Refresh(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
+	//a.Router.PathPrefix(apiVersion+"/calculate").HandlerFunc(api.Calculate(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
 
-func (a *App) Configure() {
-	a.Router.PathPrefix(apiVersion+"/register").HandlerFunc(api.Register(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(apiVersion+"/login").HandlerFunc(api.Login(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(apiVersion+"/logout").HandlerFunc(api.Logout(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(apiVersion+"/refresh").HandlerFunc(api.Refresh(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
-	a.Router.PathPrefix(apiVersion+"/calculate").HandlerFunc(api.Calculate(a.Validator, a.DbConnection, a.Query)).Methods(http.MethodPost, http.MethodOptions)
+	return http.ListenAndServe(appPort, a.Router)
 }

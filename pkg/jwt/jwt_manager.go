@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"errors"
-	"money-tracker/generator"
+	"money-tracker/pkg/generator"
 	"money-tracker/types"
 	"time"
 

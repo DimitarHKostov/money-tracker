@@ -1,25 +1,24 @@
 package api
 
 import (
-	"database/sql"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 
+	"money-tracker/pkg/database_manager"
 	"money-tracker/pkg/operation"
-	"money-tracker/pkg/query"
 	"money-tracker/pkg/validator"
 	"money-tracker/types"
 )
 
-func Register(validatorInstance validator.ValidatorInterface, dbConnection *sql.DB, queryInstance query.QueryInterface) func(w http.ResponseWriter, r *http.Request) {
+func Register(validatorInstance validator.ValidatorInterface, databaseManager database_manager.DatabaseManagerInterface) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			return
 		}
 
-		validationResult := validatorInstance.Validate(operation.Register, r, dbConnection, queryInstance)
+		validationResult := validatorInstance.Validate(operation.Register, r, databaseManager)
 		if validationResult.ValidationResultStatus == validator.Failure {
 			log.Println(validationResult.ValidationResultMessage)
 			w.WriteHeader(http.StatusForbidden)
@@ -41,12 +40,7 @@ func Register(validatorInstance validator.ValidatorInterface, dbConnection *sql.
 			return
 		}
 
-		_, err = dbConnection.Exec(queryInstance.RegisterAccount(), account.Email, account.Username, account.Password)
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		databaseManager.RegisterAccount(account)
 
 		w.WriteHeader(http.StatusCreated)
 	}

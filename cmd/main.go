@@ -6,6 +6,9 @@ import (
 	"log"
 	"money-tracker/pkg/app"
 	"money-tracker/pkg/cors"
+	"money-tracker/pkg/database_manager"
+	"money-tracker/pkg/generator"
+	"money-tracker/pkg/jwt"
 	"money-tracker/pkg/query"
 	"money-tracker/pkg/validator"
 
@@ -31,10 +34,19 @@ func main() {
 	}
 	defer dbConnection.Close()
 
-	app := app.App{Router: mux.NewRouter(), DbConnection: dbConnection, Validator: &validator.Validator{}, Query: &query.Query{}}
+	app := app.App{
+		Router: mux.NewRouter(),
+		DatabaseManager: &database_manager.DatabaseManager{
+			DbConnection: dbConnection,
+			Query:        &query.Query{},
+		},
+		Validator: &validator.Validator{},
+		JWTManager: &jwt.JWTManager{
+			PayloadGenerator: &generator.PayloadGenerator{},
+			SecretKey:        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		}}
 	app.Router.Use(cors.Middleware)
 
-	app.Configure()
 	err = app.Run()
 	if err != nil {
 		log.Panic(err)
