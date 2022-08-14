@@ -11,7 +11,7 @@ type ValidatorFactory struct {
 func (vf *ValidatorFactory) ProduceValidator(op operation.Operation) validator.ValidatorInterface {
 	switch op {
 	case operation.Register:
-		return &validator.RegisterSubValidator{}
+		return &validator.RegisterValidator{}
 	default:
 		return nil
 	}
