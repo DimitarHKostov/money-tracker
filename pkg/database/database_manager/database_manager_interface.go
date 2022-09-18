@@ -7,4 +7,5 @@ import (
 
 type DatabaseManagerInterface interface {
 	RegisterAccount(types.Account) (sql.Result, error)
+	SelectAccountWithUsername(username string) (bool, error)
 }

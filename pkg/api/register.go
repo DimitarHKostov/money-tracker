@@ -12,16 +12,8 @@ import (
 )
 
 func Register(Validator validator.ValidatorInterface, databaseManager database_manager.DatabaseManagerInterface) func(w http.ResponseWriter, r *http.Request) {
-	log.Println("tuka")
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
-			return
-		}
-
-		validationResult := Validator.Validate(r, databaseManager)
-		if validationResult.ValidationResultStatus == validation_result_status.Failure {
-			log.Println(validationResult.ValidationResultMessage)
-			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
@@ -29,6 +21,13 @@ func Register(Validator validator.ValidatorInterface, databaseManager database_m
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		validationResult := Validator.Validate(body, databaseManager)
+		if validationResult.ValidationResultStatus == validation_result_status.Failure {
+			log.Println(validationResult.ValidationResultMessage)
+			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
@@ -40,7 +39,12 @@ func Register(Validator validator.ValidatorInterface, databaseManager database_m
 			return
 		}
 
-		databaseManager.RegisterAccount(account)
+		_, err = databaseManager.RegisterAccount(account)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
 		w.WriteHeader(http.StatusCreated)
 	}

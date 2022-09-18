@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"money-tracker/pkg/api"
@@ -18,6 +19,14 @@ import (
 const (
 	apiVersion = "/api/v1"
 	appPort    = ":80"
+	host       = "localhost"
+	port       = 5432
+	user       = "postgres"
+	password   = "test"
+)
+
+var (
+	databaseConnectionString = fmt.Sprintf("host=%s port=%d user=%s password=%s sslmode=disable", host, port, user, password)
 )
 
 type App struct {
@@ -28,7 +37,7 @@ type App struct {
 
 func (a *App) Run() error {
 	databaseManagerFactory := &database_manager_factory.DatabaseManagerFactory{}
-	databaseManager, err := databaseManagerFactory.ProduceDatabaseManager(a.DatabaseType)
+	databaseManager, err := databaseManagerFactory.ProduceDatabaseManager(a.DatabaseType, databaseConnectionString)
 	if err != nil {
 		return err
 	}
