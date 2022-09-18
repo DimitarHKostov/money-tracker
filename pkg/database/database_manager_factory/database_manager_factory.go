@@ -3,6 +3,8 @@ package database_manager_factory
 import (
 	"database/sql"
 	"errors"
+	"money-tracker/pkg/database/database_config"
+	"money-tracker/pkg/database/database_credentials_formatter_factory"
 	"money-tracker/pkg/database/database_manager"
 	"money-tracker/pkg/database/database_type"
 )
@@ -15,10 +17,12 @@ const (
 type DatabaseManagerFactory struct {
 }
 
-func (dmf *DatabaseManagerFactory) ProduceDatabaseManager(databaseType database_type.DatabaseType, dbConnectionString string) (database_manager.DatabaseManagerInterface, error) {
-	switch databaseType {
+func (dmf *DatabaseManagerFactory) ProduceDatabaseManager(databaseConfig *database_config.DatabaseConfig) (database_manager.DatabaseManagerInterface, error) {
+	databaseCredentialsFormatterFactory := &database_credentials_formatter_factory.DatabaseCredentialsFormatterFactory{}
+
+	switch *&databaseConfig.DatabaseType {
 	case database_type.Postgres:
-		dbConnection, err := sql.Open(postgres, dbConnectionString)
+		dbConnection, err := sql.Open(postgres, databaseCredentialsFormatterFactory.ProduceFormattedCredentials(*databaseConfig))
 		if err != nil {
 			return nil, err
 		}
