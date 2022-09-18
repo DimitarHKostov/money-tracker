@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"money-tracker/pkg/api"
+	"money-tracker/pkg/database/database_config"
+	"money-tracker/pkg/database/database_credentials_formatter_factory"
 	"money-tracker/pkg/database/database_manager_factory"
-	"money-tracker/pkg/database/database_type"
 
 	"money-tracker/pkg/operation"
 	"money-tracker/pkg/validation/validator_factory"
@@ -16,36 +17,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	apiVersion = "/api/v1"
-	appPort    = ":80"
-	host       = "localhost"
-	port       = 5432
-	user       = "postgres"
-	password   = "test"
-)
-
-var (
-	databaseConnectionString = fmt.Sprintf("host=%s port=%d user=%s password=%s sslmode=disable", host, port, user, password)
-)
-
 type App struct {
-	Router       *mux.Router
-	JWTManager   jwt.JWTManagerInterface
-	DatabaseType database_type.DatabaseType
+	AppRouter      *mux.Router
+	JWTManager     jwt.JWTManagerInterface
+	DatabaseConfig database_config.DatabaseConfig
+	AppVersion     string
+	AppPort        string
 }
 
 func (a *App) Run() error {
+	databaseCredentialsFormatterFactory := &database_credentials_formatter_factory.DatabaseCredentialsFormatterFactory{}
+	dbConnectionString := databaseCredentialsFormatterFactory.ProduceFormattedCredentials(a.DatabaseConfig)
+
 	databaseManagerFactory := &database_manager_factory.DatabaseManagerFactory{}
-	databaseManager, err := databaseManagerFactory.ProduceDatabaseManager(a.DatabaseType, databaseConnectionString)
+	databaseManager, err := databaseManagerFactory.ProduceDatabaseManager(a.DatabaseConfig.DatabaseType, dbConnectionString)
 	if err != nil {
 		return err
 	}
 
 	validatorFactory := &validator_factory.ValidatorFactory{}
 	registerValidator := validatorFactory.ProduceValidator(operation.Register)
+	loginValidator := validatorFactory.ProduceValidator(operation.Login)
 
-	a.Router.PathPrefix(apiVersion+"/register").HandlerFunc(api.Register(registerValidator, databaseManager)).Methods(http.MethodPost, http.MethodOptions)
+	path := fmt.Sprintf("/api/%s", a.AppVersion)
 
-	return http.ListenAndServe(appPort, a.Router)
+	a.AppRouter.PathPrefix(path+"/register").HandlerFunc(api.Register(registerValidator, databaseManager)).Methods(http.MethodPost, http.MethodOptions)
+	a.AppRouter.PathPrefix(path+"/login").HandlerFunc(api.Login(loginValidator, databaseManager)).Methods(http.MethodPost, http.MethodOptions)
+
+	return http.ListenAndServe(a.AppPort, a.AppRouter)
 }
