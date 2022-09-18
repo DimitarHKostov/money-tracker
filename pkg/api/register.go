@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func Register(Validator validator.ValidatorInterface, databaseManager database_manager.DatabaseManagerInterface) func(w http.ResponseWriter, r *http.Request) {
+func Register(validator *validator.ValidatorInterface, databaseManager *database_manager.DatabaseManagerInterface) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			return
@@ -24,7 +24,7 @@ func Register(Validator validator.ValidatorInterface, databaseManager database_m
 			return
 		}
 
-		validationResult := Validator.Validate(body, databaseManager)
+		validationResult := (*validator).Validate(body, *databaseManager)
 		if validationResult.ValidationResultStatus == validation_result_status.Failure {
 			log.Println(validationResult.ValidationResultMessage)
 			w.WriteHeader(http.StatusForbidden)
@@ -39,7 +39,7 @@ func Register(Validator validator.ValidatorInterface, databaseManager database_m
 			return
 		}
 
-		_, err = databaseManager.RegisterAccount(account)
+		_, err = (*databaseManager).RegisterAccount(account)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)

@@ -15,7 +15,7 @@ type Account struct {
 
 type Payload struct {
 	Id        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
+	Account   Account   `json:"account"`
 	IssuedAt  time.Time `json:"issued_at"`
 	ExpiredAt time.Time `json:"expired_at"`
 }

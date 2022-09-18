@@ -3,6 +3,8 @@ package handler_func_factory
 import (
 	"money-tracker/pkg/api"
 	"money-tracker/pkg/database/database_manager"
+	"money-tracker/pkg/generator"
+	"money-tracker/pkg/jwt"
 	"money-tracker/pkg/operation"
 	"money-tracker/pkg/validation/validator_factory"
 	"net/http"
@@ -26,11 +28,16 @@ func (hff *HandlerFuncFactory) Produce(op operation.Operation, databaseManager *
 func (hff *HandlerFuncFactory) ProduceRegisterHandlerFunc(databaseManager *database_manager.DatabaseManagerInterface) func(http.ResponseWriter, *http.Request) {
 	validator := hff.ValidatorFactory.ProduceValidator(operation.Register)
 
-	return http.HandlerFunc(api.Register(validator, *databaseManager))
+	return http.HandlerFunc(api.Register(&validator, databaseManager))
 }
 
 func (hff *HandlerFuncFactory) ProduceLoginHandlerFunc(databaseManager *database_manager.DatabaseManagerInterface) func(http.ResponseWriter, *http.Request) {
 	validator := hff.ValidatorFactory.ProduceValidator(operation.Login)
 
-	return http.HandlerFunc(api.Login(validator, *databaseManager))
+	jwtManager := &jwt.JWTManager{
+		PayloadGenerator: &generator.PayloadGenerator{},
+		SecretKey:        "asdasasdasasdasasdasasdasaa",
+	}
+
+	return http.HandlerFunc(api.Login(&validator, databaseManager, jwtManager))
 }

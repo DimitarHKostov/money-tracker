@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"money-tracker/pkg/api"
 	"money-tracker/pkg/app/handler_func_factory"
 	"money-tracker/pkg/database/database_config"
 	"money-tracker/pkg/database/database_manager_factory"
@@ -11,14 +12,11 @@ import (
 
 	"money-tracker/pkg/validation/validator_factory"
 
-	"money-tracker/pkg/jwt"
-
 	"github.com/gorilla/mux"
 )
 
 type App struct {
 	AppRouter      *mux.Router
-	JWTManager     jwt.JWTManagerInterface
 	DatabaseConfig database_config.DatabaseConfig
 	AppVersion     string
 	AppPort        string
@@ -39,6 +37,7 @@ func (a *App) Run() error {
 
 	a.AppRouter.PathPrefix(path+"/register").HandlerFunc(registerHandlerFunc).Methods(http.MethodPost, http.MethodOptions)
 	a.AppRouter.PathPrefix(path+"/login").HandlerFunc(loginHandlerFunc).Methods(http.MethodPost, http.MethodOptions)
+	a.AppRouter.PathPrefix(path+"/test").HandlerFunc(api.Test).Methods(http.MethodOptions, http.MethodGet)
 
 	return http.ListenAndServe(a.AppPort, a.AppRouter)
 }

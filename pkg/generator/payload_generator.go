@@ -9,7 +9,7 @@ import (
 
 type PayloadGenerator struct{}
 
-func (pg *PayloadGenerator) GeneratePayload(username string, duration time.Duration) (*types.Payload, error) {
+func (pg *PayloadGenerator) GeneratePayload(account *types.Account, duration time.Duration) (*types.Payload, error) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -17,9 +17,10 @@ func (pg *PayloadGenerator) GeneratePayload(username string, duration time.Durat
 
 	payload := &types.Payload{
 		Id:        tokenID,
-		Username:  username,
+		Account:   *account,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}
+
 	return payload, nil
 }

@@ -16,8 +16,8 @@ type JWTManager struct {
 	SecretKey        string
 }
 
-func (jwtm *JWTManager) GenerateToken(username string, duration time.Duration) (string, error) {
-	payload, err := jwtm.PayloadGenerator.GeneratePayload(username, duration)
+func (jwtm *JWTManager) GenerateToken(account *types.Account, duration time.Duration) (string, error) {
+	payload, err := jwtm.PayloadGenerator.GeneratePayload(account, duration)
 	if err != nil {
 		return "", err
 	}

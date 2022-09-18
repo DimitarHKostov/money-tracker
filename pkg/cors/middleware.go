@@ -10,6 +10,7 @@ func Middleware(handler http.Handler) http.Handler {
 		w.Header().Add("Content-Type", "application/json")
 		w.Header().Add("Access-Control-Allow-Methods", "POST")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		handler.ServeHTTP(w, r)
 	})
 }

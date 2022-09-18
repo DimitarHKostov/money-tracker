@@ -6,5 +6,5 @@ import (
 )
 
 type PayloadGeneratorInterface interface {
-	GeneratePayload(username string, duration time.Duration) (*types.Payload, error)
+	GeneratePayload(account *types.Account, duration time.Duration) (*types.Payload, error)
 }

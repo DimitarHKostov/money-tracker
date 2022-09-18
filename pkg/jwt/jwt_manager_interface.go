@@ -6,6 +6,6 @@ import (
 )
 
 type JWTManagerInterface interface {
-	GenerateToken(username string, duration time.Duration) (string, error)
+	GenerateToken(account *types.Account, duration time.Duration) (string, error)
 	VerifyToken(token string) (*types.Payload, error)
 }
