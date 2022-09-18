@@ -5,8 +5,6 @@ import (
 	"money-tracker/pkg/app"
 	"money-tracker/pkg/cors"
 	"money-tracker/pkg/database/database_config"
-	"money-tracker/pkg/generator"
-	"money-tracker/pkg/jwt"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -25,10 +23,6 @@ const (
 func main() {
 	app := app.App{
 		AppRouter: mux.NewRouter(),
-		JWTManager: &jwt.JWTManager{
-			PayloadGenerator: &generator.PayloadGenerator{},
-			SecretKey:        secretKey,
-		},
 		DatabaseConfig: database_config.DatabaseConfig{
 			Host:     host,
 			Port:     port,
